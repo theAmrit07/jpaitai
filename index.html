@@ -1,758 +1,846 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>K Gardai Ho — Treepti Bhatt ji</title>
-<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { margin:0;padding:0;box-sizing:border-box; }
-html,body { width:100%;height:100%;overflow:hidden;font-family:'Yatra One',cursive; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Er. Amrit Chataut</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── page container ── */
-.page {
-  position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;padding:2rem;
-  opacity:0;pointer-events:none;transition:opacity .6s, transform .6s;
-  transform:translateY(30px);
-}
-.page.active { opacity:1;pointer-events:all;transform:translateY(0); }
-.page.exit { opacity:0;transform:translateY(-40px) scale(1.05);pointer-events:none; }
+    :root {
+      --bg:       #060810;
+      --bg2:      #0a0d18;
+      --bg3:      #0f1220;
+      --bg4:      #141828;
+      --border:   #1e2440;
+      --border2:  #2a3560;
+      --blue:     #4f8ef7;
+      --blue2:    #2563eb;
+      --blue3:    #1d4ed8;
+      --cyan:     #22d3ee;
+      --cyan2:    #06b6d4;
+      --text:     #c8d6f0;
+      --muted:    #4a5a7a;
+      --muted2:   #6b7fa8;
+      --white:    #eef2ff;
+      --code:     #1e2a4a;
+    }
 
-/* ── shared BG elements ── */
-.bg-layer { position:fixed;inset:0;z-index:0;transition:opacity 1s; }
-#stars { position:fixed;inset:0;z-index:1;pointer-events:none; }
-#particles { position:fixed;inset:0;z-index:20;pointer-events:none; }
-.glow-line { position:fixed;bottom:0;left:0;right:0;height:3px;z-index:50;
-  background:linear-gradient(90deg,#f5c842,#ff4d88,#00f5d4,#7b2fff,#f5c842);
-  background-size:300%;animation:slideGlow 3s linear infinite; }
-@keyframes slideGlow { 0%{background-position:0%} 100%{background-position:300%} }
+    html { scroll-behavior: smooth; }
 
-/* ── Progress dots ── */
-#progress {
-  position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;
-  display:flex;gap:8px;align-items:center;
-}
-.pdot {
-  width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);
-  transition:all .4s;box-shadow:0 0 6px rgba(255,255,255,.1);
-}
-.pdot.done { background:#f5c842;box-shadow:0 0 10px #f5c842; }
-.pdot.current { background:#ff4d88;width:14px;border-radius:6px;box-shadow:0 0 12px #ff4d88; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-/* ── Music btn ── */
-#musicBtn {
-  position:fixed;top:12px;right:14px;z-index:100;
-  background:rgba(255,255,255,.08);border:1.5px solid rgba(245,200,66,.4);
-  border-radius:50px;padding:.4rem .9rem;color:#f5c842;font-size:.8rem;cursor:pointer;
-  font-family:'Yatra One',cursive;backdrop-filter:blur(8px);
-  transition:background .3s,transform .2s;display:flex;align-items:center;gap:.3rem;
-}
-#musicBtn:hover{background:rgba(245,200,66,.15);transform:scale(1.06)}
+    /* Animated star field */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: var(--min, 0.1); transform: scale(1); }
+      to   { opacity: var(--max, 0.6); transform: scale(1.3); }
+    }
 
-/* ── Viz ── */
-.viz {
-  position:fixed;bottom:6px;left:50%;transform:translateX(-50%);
-  display:flex;align-items:flex-end;gap:3px;height:22px;z-index:50;
-  opacity:0;transition:opacity .4s;
-}
-.viz.on { opacity:1; }
-.vbar {
-  width:4px;border-radius:2px;
-  background:linear-gradient(to top,var(--vc1,#ff4d88),var(--vc2,#f5c842));
-  animation:vibanim var(--vd,.4s) ease-in-out infinite alternate;
-  height:var(--vh,10px);
-}
-@keyframes vibanim { from{transform:scaleY(.3)} to{transform:scaleY(1)} }
+    /* Glow blobs */
+    .glow {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(100px);
+    }
+    .glow-1 {
+      width: 600px; height: 600px;
+      top: -200px; right: -100px;
+      background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+      animation: floatBlob 12s ease-in-out infinite alternate;
+    }
+    .glow-2 {
+      width: 400px; height: 400px;
+      bottom: 20%; left: -100px;
+      background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%);
+      animation: floatBlob 9s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes floatBlob {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(30px, 40px) scale(1.1); }
+    }
 
-/* ── Floaters ── */
-.floaters{position:fixed;inset:0;pointer-events:none;z-index:30;}
-.floater{position:absolute;font-size:var(--fs,1.8rem);bottom:-60px;left:var(--lft,50%);opacity:0;
-  animation:floatUp var(--du,4s) ease-out forwards var(--dl,0s);}
-@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(.5) rotate(0deg)}20%{opacity:1}80%{opacity:.8}100%{opacity:0;transform:translateY(-110vh) scale(1.2) rotate(var(--rot,20deg))}}
+    /* All content sits above stars */
+    nav, main, footer { position: relative; z-index: 1; }
 
-/* ── Burst ── */
-.burst-wrap{position:fixed;inset:0;pointer-events:none;z-index:25;}
-.sb{position:absolute;width:var(--sw,5px);height:var(--sw,5px);border-radius:50%;
-  background:var(--sc,white);left:var(--sleft);top:var(--stop);opacity:0;
-  animation:sbAnim var(--sdu,1.2s) ease-out forwards var(--sdl,0s);}
-@keyframes sbAnim{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--stx),var(--sty)) scale(0)}}
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(6,8,16,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
 
-/* ── Shared question card ── */
-.q-card {
-  position:relative;max-width:600px;width:100%;
-  padding:2.5rem 2.5rem 2rem;border-radius:24px;
-  backdrop-filter:blur(14px);
-  border:1.5px solid var(--card-border, rgba(255,255,255,.15));
-  background:var(--card-bg, rgba(0,0,0,.35));
-  box-shadow:0 0 60px var(--card-glow, rgba(255,77,136,.15));
-}
-.q-label {
-  font-family:'Tiro Devanagari Hindi',serif;font-style:italic;
-  font-size:.85rem;letter-spacing:.08em;margin-bottom:.6rem;
-  color:var(--label-c, rgba(255,255,255,.45));
-}
-.q-text {
-  font-family:'Yatra One',cursive;
-  font-size:clamp(1.6rem,5vw,3rem);line-height:1.2;margin-bottom:1.4rem;
-  color:var(--q-c, #fff);text-shadow:0 0 30px var(--q-glow, rgba(255,255,255,.4));
-}
-.sub-text {
-  font-family:'Tiro Devanagari Hindi',serif;font-style:italic;
-  font-size:clamp(.9rem,2.5vw,1.1rem);margin-bottom:1.6rem;
-  color:var(--sub-c, rgba(255,255,255,.6));
-}
-.input-row { display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap; }
-.answer-input {
-  background:var(--inp-bg,rgba(255,255,255,.07));
-  border:1.5px solid var(--inp-border,rgba(255,255,255,.25));
-  border-radius:14px;padding:.7rem 1.1rem;color:#fff;
-  font-family:'Tiro Devanagari Hindi',serif;font-size:1rem;
-  width:clamp(180px,35vw,280px);outline:none;caret-color:var(--q-c,#fff);
-  transition:border-color .3s,box-shadow .3s,background .3s;
-}
-.answer-input::placeholder{color:rgba(255,255,255,.3)}
-.answer-input:focus{border-color:var(--q-c,#fff);box-shadow:0 0 18px var(--q-glow,rgba(255,255,255,.2));background:rgba(255,255,255,.11)}
-.send-btn {
-  position:relative;overflow:hidden;border:none;border-radius:14px;padding:.7rem 1.4rem;
-  color:#fff;font-family:'Yatra One',cursive;font-size:.95rem;cursor:pointer;
-  background:var(--btn-bg,linear-gradient(135deg,#ff4d88,#7b2fff));
-  box-shadow:0 4px 20px var(--btn-glow,rgba(255,77,136,.35));
-  transition:transform .2s,box-shadow .3s;white-space:nowrap;
-}
-.send-btn:hover{transform:translateY(-2px) scale(1.05)}
-.send-btn:active{transform:scale(.97)}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.35);
-  transform:scale(0);animation:ripple .6s linear forwards;pointer-events:none;}
-@keyframes ripple{to{transform:scale(4);opacity:0}}
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.1rem;
+      color: var(--white);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .nav-logo .prompt { color: var(--cyan); }
+    .nav-logo .cursor {
+      display: inline-block;
+      width: 2px; height: 1.1em;
+      background: var(--cyan);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
 
-/* ── emoji bounce ── */
-.emoji-big { font-size:3rem;display:block;margin-bottom:.8rem;
-  animation:emojiBounce 1.5s ease-in-out infinite; }
-@keyframes emojiBounce{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(5deg)}}
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted2);
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    .nav-links a::before { content: '// '; color: var(--border2); }
+    .nav-links a:hover { color: var(--cyan); }
 
-/* ── Response flash ── */
-.response-flash {
-  margin-top:1rem;font-family:'Tiro Devanagari Hindi',serif;font-style:italic;
-  font-size:1rem;color:var(--q-c,#fff);opacity:0;
-  transition:opacity .5s;min-height:1.4em;
-}
+    /* HERO */
+    .hero {
+      padding: 8rem 4rem 6rem;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
 
-/* ═══════════ PAGE THEMES ═══════════ */
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(79,142,247,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,142,247,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    }
 
-/* Page 0 — Deep cosmic (original) */
-#bg0 { background:radial-gradient(ellipse at 30% 40%,rgba(255,77,136,.2) 0%,rgba(10,10,26,1) 60%),
-              radial-gradient(ellipse at 70% 70%,rgba(123,47,255,.2) 0%,transparent 60%),#0a0a1a; }
-#page0 { --card-bg:rgba(10,10,40,.5);--card-border:rgba(245,200,66,.2);--card-glow:rgba(255,77,136,.2);
-  --q-c:#f5c842;--q-glow:rgba(245,200,66,.5);--label-c:rgba(255,200,100,.5);
-  --btn-bg:linear-gradient(135deg,#ff4d88,#7b2fff);--btn-glow:rgba(255,77,136,.4);
-  --inp-border:rgba(245,200,66,.35);--inp-bg:rgba(255,255,255,.06);--sub-c:rgba(255,255,255,.55); }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--code);
+      border: 1px solid var(--border2);
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--cyan);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,211,238,0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34,211,238,0); }
+    }
 
-/* Page 1 — Warm sunset Pokhara */
-#bg1 { background:radial-gradient(ellipse at 50% 0%,rgba(255,140,50,.35) 0%,transparent 70%),
-              radial-gradient(ellipse at 80% 100%,rgba(255,60,100,.3) 0%,transparent 60%),#1a0810; }
-#page1 { --card-bg:rgba(40,10,20,.6);--card-border:rgba(255,140,50,.3);--card-glow:rgba(255,100,50,.2);
-  --q-c:#ffaa44;--q-glow:rgba(255,170,68,.5);--label-c:rgba(255,180,100,.5);
-  --btn-bg:linear-gradient(135deg,#ff6030,#ff4d88);--btn-glow:rgba(255,80,50,.4);
-  --inp-border:rgba(255,140,50,.4);--sub-c:rgba(255,180,150,.65); }
+    .hero h1 {
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 800;
+      line-height: 1.0;
+      color: var(--white);
+      max-width: 850px;
+      margin-bottom: 1.8rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
 
-/* Page 2 — Bhokai (hungry) neon green */
-#bg2 { background:radial-gradient(ellipse at 20% 60%,rgba(0,255,120,.15) 0%,transparent 60%),
-              radial-gradient(ellipse at 80% 30%,rgba(0,200,80,.18) 0%,transparent 60%),#06100a; }
-#page2 { --card-bg:rgba(0,30,15,.6);--card-border:rgba(0,255,120,.25);--card-glow:rgba(0,255,120,.15);
-  --q-c:#00ff80;--q-glow:rgba(0,255,120,.5);--label-c:rgba(100,255,150,.5);
-  --btn-bg:linear-gradient(135deg,#00cc60,#00ff80);--btn-glow:rgba(0,200,80,.4);
-  --inp-border:rgba(0,255,120,.35);--sub-c:rgba(150,255,180,.65); }
+    .hero h1 .highlight {
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-/* Page 3 — Academic blue */
-#bg3 { background:radial-gradient(ellipse at 60% 40%,rgba(30,80,255,.25) 0%,transparent 60%),
-              radial-gradient(ellipse at 30% 70%,rgba(0,180,255,.2) 0%,transparent 60%),#030818; }
-#page3 { --card-bg:rgba(5,10,40,.65);--card-border:rgba(80,160,255,.3);--card-glow:rgba(30,100,255,.2);
-  --q-c:#60b4ff;--q-glow:rgba(80,180,255,.5);--label-c:rgba(100,180,255,.5);
-  --btn-bg:linear-gradient(135deg,#1e50ff,#00b4ff);--btn-glow:rgba(30,100,255,.4);
-  --inp-border:rgba(80,160,255,.35);--sub-c:rgba(160,210,255,.65); }
+    .hero h1 .line2 {
+      display: block;
+      color: var(--muted2);
+      font-weight: 400;
+      font-size: 0.55em;
+      margin-top: 0.3em;
+      font-family: 'Space Mono', monospace;
+      -webkit-text-fill-color: var(--muted2);
+    }
 
-/* Page 4 — Pokhreli rose/pink */
-#bg4 { background:radial-gradient(ellipse at 50% 50%,rgba(255,60,150,.25) 0%,transparent 60%),
-              radial-gradient(ellipse at 10% 80%,rgba(255,100,200,.2) 0%,transparent 60%),#180010; }
-#page4 { --card-bg:rgba(40,0,25,.6);--card-border:rgba(255,80,180,.3);--card-glow:rgba(255,60,180,.2);
-  --q-c:#ff6ec7;--q-glow:rgba(255,110,200,.5);--label-c:rgba(255,150,220,.5);
-  --btn-bg:linear-gradient(135deg,#ff2d90,#ff6ec7);--btn-glow:rgba(255,50,160,.4);
-  --inp-border:rgba(255,80,180,.35);--sub-c:rgba(255,180,230,.65); }
+    .hero-sub {
+      max-width: 520px;
+      color: var(--muted2);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
 
-/* Page 5 — Bro vibes — electric orange */
-#bg5 { background:radial-gradient(ellipse at 70% 30%,rgba(255,120,0,.25) 0%,transparent 60%),
-              radial-gradient(ellipse at 20% 80%,rgba(255,60,0,.2) 0%,transparent 60%),#130800; }
-#page5 { --card-bg:rgba(35,10,0,.65);--card-border:rgba(255,130,0,.3);--card-glow:rgba(255,100,0,.2);
-  --q-c:#ff8c00;--q-glow:rgba(255,140,0,.5);--label-c:rgba(255,180,60,.5);
-  --btn-bg:linear-gradient(135deg,#ff4500,#ff8c00);--btn-glow:rgba(255,80,0,.4);
-  --inp-border:rgba(255,130,0,.35);--sub-c:rgba(255,200,120,.65); }
+    .hero-ctas {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
 
-/* Page 6 — Calm purple life */
-#bg6 { background:radial-gradient(ellipse at 50% 50%,rgba(120,0,255,.22) 0%,transparent 60%),
-              radial-gradient(ellipse at 90% 10%,rgba(200,0,255,.15) 0%,transparent 60%),#0d0018; }
-#page6 { --card-bg:rgba(20,0,40,.65);--card-border:rgba(160,80,255,.3);--card-glow:rgba(130,50,255,.2);
-  --q-c:#b86fff;--q-glow:rgba(180,100,255,.5);--label-c:rgba(200,150,255,.5);
-  --btn-bg:linear-gradient(135deg,#7b2fff,#c86fff);--btn-glow:rgba(120,50,255,.4);
-  --inp-border:rgba(160,80,255,.35);--sub-c:rgba(210,170,255,.65); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue2), var(--blue3));
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(37,99,235,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(37,99,235,0.5);
+    }
 
-/* Page 7 — Late night sleepy cyan-dark */
-#bg7 { background:radial-gradient(ellipse at 50% 80%,rgba(0,200,180,.15) 0%,transparent 60%),
-              radial-gradient(ellipse at 30% 20%,rgba(0,100,120,.18) 0%,transparent 60%),#010f10; }
-#page7 { --card-bg:rgba(0,20,25,.7);--card-border:rgba(0,220,200,.2);--card-glow:rgba(0,180,160,.15);
-  --q-c:#00e5cc;--q-glow:rgba(0,220,200,.4);--label-c:rgba(0,220,200,.45);
-  --btn-bg:linear-gradient(135deg,#006655,#00e5cc);--btn-glow:rgba(0,180,160,.35);
-  --inp-border:rgba(0,220,200,.3);--sub-c:rgba(150,240,230,.6); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted2);
+      border: 1px solid var(--border2);
+      padding: 0.9rem 2rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
 
-/* ── FINAL PAGE ── */
-#bg-final { background:radial-gradient(ellipse at 50% 50%,rgba(245,200,66,.25) 0%,transparent 60%),
-              radial-gradient(ellipse at 10% 10%,rgba(255,77,136,.2) 0%,transparent 60%),
-              radial-gradient(ellipse at 90% 90%,rgba(0,245,212,.2) 0%,transparent 60%),#050510; }
-#page-final {
-  font-family:'Yatra One',cursive;
-}
-.final-emoji { font-size:4rem;display:block;margin-bottom:1rem;
-  animation:finalSpin 3s linear infinite; }
-@keyframes finalSpin{from{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.3)}to{transform:rotate(360deg) scale(1)}}
-.final-title {
-  font-size:clamp(1.2rem,4vw,2.2rem);line-height:1.4;max-width:560px;margin:0 auto 1rem;
-  background:linear-gradient(135deg,#f5c842,#ff4d88,#00f5d4,#7b2fff,#f5c842);
-  background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;animation:gradShift 4s ease infinite;
-}
-.final-count {
-  font-size:clamp(3rem,10vw,6rem);line-height:1;color:#f5c842;
-  text-shadow:0 0 40px #f5c842,0 0 80px rgba(245,200,66,.5);
-  animation:countPulse 1.5s ease-in-out infinite;
-}
-@keyframes countPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-.final-sub {
-  font-family:'Tiro Devanagari Hindi',serif;font-style:italic;
-  font-size:clamp(1rem,3vw,1.6rem);color:rgba(255,255,255,.7);margin-top:.8rem;
-}
-.final-location {
-  margin-top:1.5rem;font-size:clamp(.9rem,2.5vw,1.1rem);
-  color:#00f5d4;text-shadow:0 0 20px #00f5d4;letter-spacing:.06em;
-}
+    .hero-stats {
+      display: flex; gap: 3rem; margin-top: 4rem;
+      padding-top: 3rem; border-top: 1px solid var(--border);
+      animation: fadeUp 0.7s 0.4s ease both;
+    }
+    .stat-num {
+      font-size: 2rem; font-weight: 800;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem;
+    }
 
-@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    /* FEATURED */
+    .featured {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
 
-/* orb blur bg decorations per page */
-.orb-set { position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none; }
-.orb { position:absolute;border-radius:50%;filter:blur(80px);opacity:.2;
-  animation:drift var(--d,12s) ease-in-out infinite alternate; }
-@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(60px,40px) scale(1.15)}}
+    .featured-visual {
+      position: relative;
+      min-height: 500px;
+      background: var(--bg2);
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
 
-/* star twinkle */
-.star{position:absolute;border-radius:50%;background:white;
-  animation:twinkle var(--dur,3s) infinite alternate ease-in-out;opacity:0;}
-@keyframes twinkle{from{opacity:0;transform:scale(.5)}to{opacity:var(--op,.8);transform:scale(1.2)}}
-</style>
+    .terminal {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      width: 85%; max-width: 420px;
+      box-shadow: 0 0 60px rgba(37,99,235,0.15), 0 0 0 1px var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .terminal-bar {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      padding: 0.7rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .t-red { background: #ff5f57; }
+    .t-yellow { background: #febc2e; }
+    .t-green { background: #28c840; }
+    .terminal-title { color: var(--muted); font-size: 0.7rem; margin-left: auto; margin-right: auto; }
+    .terminal-body { padding: 1.4rem; line-height: 2; }
+    .t-comment { color: var(--muted); }
+    .t-key { color: var(--cyan); }
+    .t-val { color: #a5f3fc; }
+    .t-str { color: #86efac; }
+    .t-num { color: #fca5a5; }
+    .t-cursor-line { display: flex; align-items: center; }
+    .t-prompt { color: var(--blue); margin-right: 0.5rem; }
+    .t-blink {
+      display: inline-block; width: 7px; height: 1em;
+      background: var(--cyan); animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    .featured-content {
+      padding: 4rem;
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      border: 1px solid rgba(34,211,238,0.3);
+      background: rgba(34,211,238,0.05);
+      padding: 0.3rem 0.8rem;
+      margin-bottom: 1.5rem;
+      width: fit-content;
+    }
+    .tag::before { content: '#'; opacity: 0.5; }
+
+    .featured-content h2 {
+      font-size: 2rem; font-weight: 700;
+      color: var(--white); line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .featured-content p { color: var(--muted2); font-size: 0.95rem; margin-bottom: 2rem; }
+
+    .post-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; color: var(--muted);
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .post-meta .sep { color: var(--border2); }
+    .post-meta .date { color: var(--blue); }
+
+    .read-link {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      color: var(--cyan); text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem; margin-top: 2rem;
+      transition: gap 0.2s;
+    }
+    .read-link:hover { gap: 1rem; }
+    .read-link .arrow { transition: transform 0.2s; }
+    .read-link:hover .arrow { transform: translateX(4px); }
+
+    /* POSTS GRID */
+    .section { padding: 5rem 4rem; }
+
+    .section-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 2.5rem;
+    }
+    .section-header h3 {
+      font-size: 1.5rem; font-weight: 700; color: var(--white);
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .section-header h3::before {
+      content: '';
+      display: inline-block; width: 3px; height: 1.2em;
+      background: linear-gradient(to bottom, var(--blue), var(--cyan));
+    }
+    .section-header a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .section-header a:hover { color: var(--cyan); }
+
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .post-card {
+      background: var(--bg2);
+      padding: 2rem;
+      transition: background 0.2s;
+      cursor: pointer;
+      display: flex; flex-direction: column;
+    }
+    .post-card:hover { background: var(--bg3); }
+
+    .card-category {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .card-category .bar {
+      display: inline-block; width: 20px; height: 1px;
+      background: var(--border2);
+    }
+
+    .card-icon { font-size: 2rem; margin-bottom: 1.2rem; }
+
+    .post-card h4 {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--white); line-height: 1.3;
+      margin-bottom: 0.8rem;
+    }
+    .post-card p {
+      color: var(--muted2); font-size: 0.85rem;
+      line-height: 1.7; margin-bottom: 1.5rem; flex: 1;
+    }
+
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--border); padding-top: 1rem;
+      font-family: 'Space Mono', monospace; font-size: 0.68rem;
+    }
+    .card-date { color: var(--muted); }
+    .card-read { color: var(--blue); }
+
+    /* CODE DIVIDER */
+    .code-divider {
+      padding: 1.5rem 4rem;
+      background: var(--bg2);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .code-divider span { color: var(--border2); }
+    .code-divider .hi { color: var(--blue); }
+
+    /* ADVENTURE SECTION */
+    .adventure {
+      padding: 5rem 4rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .adventure-text h3 {
+      font-size: 2.5rem; font-weight: 800;
+      color: var(--white); line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .adventure-text h3 span {
+      display: block;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .adventure-text p { color: var(--muted2); font-size: 0.95rem; margin-bottom: 1.5rem; }
+
+    .locations {
+      display: flex; flex-direction: column; gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .location-item {
+      background: var(--bg2);
+      padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1.2rem;
+      transition: background 0.2s;
+    }
+    .location-item:hover { background: var(--bg3); }
+    .loc-icon { font-size: 1.3rem; width: 2rem; text-align: center; }
+    .loc-name { color: var(--white); font-weight: 600; font-size: 0.95rem; }
+    .loc-desc { color: var(--muted2); font-size: 0.8rem; font-family: 'Space Mono', monospace; }
+    .loc-status {
+      margin-left: auto;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+    }
+    .loc-done { background: rgba(34,211,238,0.1); color: var(--cyan); border: 1px solid rgba(34,211,238,0.2); }
+    .loc-next { background: rgba(79,142,247,0.1); color: var(--blue); border: 1px solid rgba(79,142,247,0.2); }
+
+    /* NEWSLETTER */
+    .newsletter {
+      padding: 6rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .newsletter::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(37,99,235,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .newsletter .sub-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; color: var(--cyan);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .newsletter h3 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; color: var(--white);
+      margin-bottom: 1rem; line-height: 1.1;
+    }
+    .newsletter p { color: var(--muted2); font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+    .newsletter-form {
+      display: flex; max-width: 480px; margin: 0 auto;
+      border: 1px solid var(--border2);
+      background: var(--bg2);
+    }
+    .newsletter-form input {
+      flex: 1; background: transparent;
+      border: none; padding: 1rem 1.5rem;
+      color: var(--text);
+      font-family: 'Space Mono', monospace; font-size: 0.82rem;
+      outline: none;
+    }
+    .newsletter-form input::placeholder { color: var(--muted); }
+    .newsletter-form button {
+      background: linear-gradient(135deg, var(--blue2), var(--blue3));
+      border: none; color: white;
+      padding: 1rem 1.8rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .newsletter-form button:hover { opacity: 0.85; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem; color: var(--muted2);
+    }
+    .footer-logo span { color: var(--cyan); }
+
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      color: var(--muted); text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .hero { padding: 4rem 1.5rem 3rem; }
+      .hero-stats { gap: 2rem; flex-wrap: wrap; }
+      .featured { grid-template-columns: 1fr; }
+      .featured-visual { min-height: 300px; }
+      .featured-content { padding: 2rem; border-left: none; border-top: 1px solid var(--border); }
+      .section { padding: 3rem 1.5rem; }
+      .posts-grid { grid-template-columns: 1fr; }
+      .adventure { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
+      .newsletter { padding: 4rem 1.5rem; }
+      footer { flex-direction: column; gap: 1.5rem; padding: 2rem 1.5rem; text-align: center; }
+      .code-divider { padding: 1rem 1.5rem; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- Music -->
-<button id="musicBtn" title="Toggle Music">
-  <span id="musicNote">🎵</span> <span id="musicLabel">Play Music</span>
-</button>
+  <div class="stars" id="stars"></div>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
 
-<!-- Viz -->
-<div class="viz" id="viz"></div>
+  <nav>
+    <a href="#" class="nav-logo">
+      <span class="prompt">~/</span>myblog<span class="cursor"></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">home</a></li>
+      <li><a href="#">journal</a></li>
+      <li><a href="#">projects</a></li>
+      <li><a href="#">about</a></li>
+    </ul>
+  </nav>
 
-<!-- Progress -->
-<div id="progress"></div>
-
-<!-- Stars -->
-<div id="stars"></div>
-<div class="glow-line"></div>
-
-<!-- Floaters container -->
-<div class="floaters" id="floaters"></div>
-<div class="burst-wrap" id="burstWrap"></div>
-
-<!-- ═══ BACKGROUNDS ═══ -->
-<div class="bg-layer" id="bg0"></div>
-<div class="bg-layer" id="bg1" style="opacity:0"></div>
-<div class="bg-layer" id="bg2" style="opacity:0"></div>
-<div class="bg-layer" id="bg3" style="opacity:0"></div>
-<div class="bg-layer" id="bg4" style="opacity:0"></div>
-<div class="bg-layer" id="bg5" style="opacity:0"></div>
-<div class="bg-layer" id="bg6" style="opacity:0"></div>
-<div class="bg-layer" id="bg7" style="opacity:0"></div>
-<div class="bg-layer" id="bg-final" style="opacity:0"></div>
-
-<!-- ═══ PAGES ═══ -->
-
-<!-- PAGE 0: K gardai ho bhatta ji -->
-<div class="page active" id="page0">
-  <div class="q-card">
-    <span class="emoji-big">🌙</span>
-    <p class="q-label">✨ सुन्न मन छ...</p>
-    <p class="q-text">के गर्दै हौ भट्ट जी?</p>
-    <p class="sub-text">K gardai ho Bhatta ji?</p>
-    <div class="input-row">
-      <input class="answer-input" type="text" placeholder="Bhannus ni..." maxlength="120" autocomplete="off" />
-      <button class="send-btn">भन्नुस् 💬</button>
+  <main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid-lines"></div>
+    <div class="hero-badge">
+      <div class="dot"></div>
+      available for new adventures &amp; collabs
     </div>
-    <div class="response-flash"></div>
-  </div>
-</div>
-
-<!-- PAGE 1: Khana bhayo — reply: ma ta bhokai chhu -->
-<div class="page" id="page1">
-  <div class="q-card">
-    <span class="emoji-big">🍛</span>
-    <p class="q-label">🍽️ पेट को कुरा...</p>
-    <p class="q-text">अनि खाना भयो?</p>
-    <p class="sub-text">Ani khana bhayo?</p>
-    <div class="input-row">
-      <input class="answer-input" type="text" placeholder="खाना खायौ?" maxlength="120" autocomplete="off" />
-      <button class="send-btn">भन्नुस् 🍜</button>
+    <h1>
+      Code by day,<br>
+      <span class="highlight">explore by night.</span>
+      <span class="line2">// software engineer · adventurer · writer</span>
+    </h1>
+    <p class="hero-sub">
+      Thoughts from someone who debugs at altitude and writes about the spaces between commits. Building things, climbing things, writing about all of it.
+    </p>
+    <div class="hero-ctas">
+      <a href="#" class="btn-primary">Read the Journal</a>
+      <a href="#" class="btn-ghost">View Projects →</a>
     </div>
-    <div class="response-flash"></div>
-  </div>
-</div>
-
-<!-- PAGE 2: Padhai kaso chha -->
-<div class="page" id="page2">
-  <div class="q-card">
-    <span class="emoji-big">📚</span>
-    <p class="q-label">🎓 पढाइको बारेमा...</p>
-    <p class="q-text">पढाई कसो छ?</p>
-    <p class="sub-text">Padhai kaso chha?</p>
-    <div class="input-row">
-      <input class="answer-input" type="text" placeholder="Padhai ko haal..." maxlength="120" autocomplete="off" />
-      <button class="send-btn">भन्नुस् 📖</button>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">42</div>
+        <div class="stat-label">// posts written</div>
+      </div>
+      <div>
+        <div class="stat-num">18</div>
+        <div class="stat-label">// countries visited</div>
+      </div>
+      <div>
+        <div class="stat-num">7</div>
+        <div class="stat-label">// side projects</div>
+      </div>
     </div>
-    <div class="response-flash"></div>
-  </div>
-</div>
+  </section>
 
-<!-- PAGE 3: Pokhreli ko maya -->
-<div class="page" id="page3">
-  <div class="q-card">
-    <span class="emoji-big">💙</span>
-    <p class="q-label">🏔️ फेवाताल किनारबाट...</p>
-    <p class="q-text">पोखरेली को माया ले सताको त छैन?</p>
-    <p class="sub-text">Pokhreli ko maya le satako ta chhaina?</p>
-    <div class="input-row">
-      <input class="answer-input" type="text" placeholder="Maya ko kura..." maxlength="120" autocomplete="off" />
-      <button class="send-btn">भन्नुस् 💙</button>
+  <!-- FEATURED -->
+  <section class="featured">
+    <div class="featured-visual">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dot t-red"></div>
+          <div class="terminal-dot t-yellow"></div>
+          <div class="terminal-dot t-green"></div>
+          <div class="terminal-title">life.config.json</div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-comment">// current status</div>
+          <div><span class="t-key">"location"</span>: <span class="t-str">"Patagonia, Chile"</span>,</div>
+          <div><span class="t-key">"mode"</span>: <span class="t-str">"remote + trekking"</span>,</div>
+          <div><span class="t-key">"elevation"</span>: <span class="t-num">3240</span>,</div>
+          <div><span class="t-key">"wifi"</span>: <span class="t-val">false</span>,</div>
+          <div><span class="t-key">"coffee"</span>: <span class="t-val">true</span>,</div>
+          <div><span class="t-key">"writing"</span>: <span class="t-val">true</span>,</div>
+          <div>&nbsp;</div>
+          <div class="t-comment">// next commit</div>
+          <div><span class="t-key">"post"</span>: <span class="t-str">"the patagonia dispatch"</span></div>
+          <div>&nbsp;</div>
+          <div class="t-cursor-line">
+            <span class="t-prompt">$</span> ./write --draft<span class="t-blink"></span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="response-flash"></div>
-  </div>
-</div>
-
-<!-- PAGE 4: Kasaju bro -->
-<div class="page" id="page4">
-  <div class="q-card">
-    <span class="emoji-big">👊</span>
-    <p class="q-label">🔥 bro ko kura...</p>
-    <p class="q-text">कसाजु ब्रो को के छ?</p>
-    <p class="sub-text">Kasaju brooo ko k chha?</p>
-    <div class="input-row">
-      <input class="answer-input" type="text" placeholder="Bro ko haal..." maxlength="120" autocomplete="off" />
-      <button class="send-btn">भन्नुस् 👊</button>
+    <div class="featured-content">
+      <span class="tag">featured</span>
+      <h2>Building a Backpacking App While Actually Backpacking</h2>
+      <p>What happens when you decide to dogfood your own trail-planning app on a 3-week trek through Patagonia? Spoiler: bugs look different at 3,000m.</p>
+      <div class="post-meta">
+        <span class="date">Feb 12, 2026</span>
+        <span class="sep">·</span>
+        <span>8 min read</span>
+        <span class="sep">·</span>
+        <span>adventure + code</span>
+      </div>
+      <a href="#" class="read-link">read_article() <span class="arrow">→</span></a>
     </div>
-    <div class="response-flash"></div>
-  </div>
-</div>
+  </section>
 
-<!-- PAGE 5: K chaldai chha jindagi ma -->
-<div class="page" id="page5">
-  <div class="q-card">
-    <span class="emoji-big">🌊</span>
-    <p class="q-label">जिन्दगी को यात्रा...</p>
-    <p class="q-text">के चल्दै छ जिन्दगी मा?</p>
-    <p class="sub-text">K chaldai chha jindagi ma?</p>
-    <div class="input-row">
-      <input class="answer-input" type="text" placeholder="Jindagi ko haal..." maxlength="120" autocomplete="off" />
-      <button class="send-btn">भन्नुस् 🌊</button>
+  <!-- CODE DIVIDER -->
+  <div class="code-divider">
+    <span class="hi">const</span> posts = [<span class="hi">"reflections"</span>, <span class="hi">"builds"</span>, <span class="hi">"dispatches"</span>, <span class="hi">"gear"</span>].<span class="hi">filter</span>(p => p.resonates()) <span>// latest entries below</span>
+  </div>
+
+  <!-- POSTS GRID -->
+  <section class="section">
+    <div class="section-header">
+      <h3>Recent Posts</h3>
+      <a href="#">view all →</a>
     </div>
-    <div class="response-flash"></div>
-  </div>
-</div>
-
-<!-- PAGE 6: La aba suta -->
-<div class="page" id="page6">
-  <div class="q-card">
-    <span class="emoji-big">😴</span>
-    <p class="q-label">🌃 rati bhaisakyo...</p>
-    <p class="q-text">ला अब सुत! रात भइसक्यो!</p>
-    <p class="sub-text">La aba suta rati bhaisakyoo!</p>
-    <div class="input-row">
-      <input class="answer-input" type="text" placeholder="Okay okay..." maxlength="120" autocomplete="off" />
-      <button class="send-btn">सुत्छु 😴</button>
+    <div class="posts-grid">
+      <article class="post-card">
+        <div class="card-category"><span class="bar"></span>engineering</div>
+        <div class="card-icon">🛰️</div>
+        <h4>Why I Rewrote My Site Three Times (And What I Learned)</h4>
+        <p>A brutally honest post-mortem on over-engineering a static blog. Sometimes the best stack is the one you already know.</p>
+        <div class="card-footer">
+          <span class="card-date">Feb 8</span>
+          <span class="card-read">6 min →</span>
+        </div>
+      </article>
+      <article class="post-card">
+        <div class="card-category"><span class="bar"></span>adventure</div>
+        <div class="card-icon">🏔️</div>
+        <h4>Solo in the Dolomites: What the Mountains Taught Me About Systems</h4>
+        <p>Every trail has edge cases. Every camp has a dependency chain. Turns out mountaineering and architecture have a lot in common.</p>
+        <div class="card-footer">
+          <span class="card-date">Jan 22</span>
+          <span class="card-read">9 min →</span>
+        </div>
+      </article>
+      <article class="post-card">
+        <div class="card-category"><span class="bar"></span>gear</div>
+        <div class="card-icon">🎒</div>
+        <h4>My Remote Work Setup for Anywhere on Earth</h4>
+        <p>From a café in Lisbon to a tent in Kyrgyzstan — the exact hardware, software and systems I use to stay in flow on the move.</p>
+        <div class="card-footer">
+          <span class="card-date">Jan 15</span>
+          <span class="card-read">5 min →</span>
+        </div>
+      </article>
+      <article class="post-card">
+        <div class="card-category"><span class="bar"></span>reflection</div>
+        <div class="card-icon">🌊</div>
+        <h4>On Deep Work and Deep Water: A Freediving Experiment</h4>
+        <p>I spent a week alternating between writing code and holding my breath underwater. Surprisingly related pursuits.</p>
+        <div class="card-footer">
+          <span class="card-date">Jan 3</span>
+          <span class="card-read">7 min →</span>
+        </div>
+      </article>
+      <article class="post-card">
+        <div class="card-category"><span class="bar"></span>build log</div>
+        <div class="card-icon">⚙️</div>
+        <h4>I Built a CLI Tool to Plan Hiking Routes with AI</h4>
+        <p>A weekend project that got out of hand. GPX files, elevation APIs, LLMs, and way too much terminal time.</p>
+        <div class="card-footer">
+          <span class="card-date">Dec 20</span>
+          <span class="card-read">10 min →</span>
+        </div>
+      </article>
+      <article class="post-card">
+        <div class="card-category"><span class="bar"></span>life</div>
+        <div class="card-icon">🌙</div>
+        <h4>The 5AM Ritual That Changed How I Write Code</h4>
+        <p>Not a productivity hack. Just a quiet morning, a dark terminal, and the strange clarity that comes before the world wakes up.</p>
+        <div class="card-footer">
+          <span class="card-date">Dec 11</span>
+          <span class="card-read">4 min →</span>
+        </div>
+      </article>
     </div>
-    <div class="response-flash"></div>
-  </div>
-</div>
+  </section>
 
-<!-- FINAL PAGE -->
-<div class="page" id="page-final">
-  <span class="final-emoji">🎉</span>
-  <p class="final-title">वैसे के थाहा छ?</p>
-  <div class="final-count">50,00,000</div>
-  <p class="final-sub">pachas lakh manche chha...</p>
-  <p class="final-location">यस Tinkune Jamaal मा!</p>
-  <p style="margin-top:2rem;font-family:'Tiro Devanagari Hindi',serif;font-style:italic;color:rgba(255,255,255,.4);font-size:.85rem">
-    ...ani timi Treepti ji ekai ho 🌸
-  </p>
-</div>
+  <!-- ADVENTURE -->
+  <section class="adventure">
+    <div class="adventure-text">
+      <h3>Always in<br><span>motion.</span></h3>
+      <p>I work remotely so I can be anywhere. Here's where the recent dispatches are coming from — and where I'm headed next.</p>
+      <a href="#" class="btn-ghost">See all adventures →</a>
+    </div>
+    <div class="locations">
+      <div class="location-item">
+        <div class="loc-icon">🇨🇱</div>
+        <div>
+          <div class="loc-name">Patagonia, Chile</div>
+          <div class="loc-desc">Torres del Paine · W Trek</div>
+        </div>
+        <div class="loc-status loc-next">next →</div>
+      </div>
+      <div class="location-item">
+        <div class="loc-icon">🇯🇵</div>
+        <div>
+          <div class="loc-name">Hokkaido, Japan</div>
+          <div class="loc-desc">Backcountry ski · remote work</div>
+        </div>
+        <div class="loc-status loc-done">done ✓</div>
+      </div>
+      <div class="location-item">
+        <div class="loc-icon">🇰🇬</div>
+        <div>
+          <div class="loc-name">Kyrgyzstan</div>
+          <div class="loc-desc">Tian Shan range · horse trek</div>
+        </div>
+        <div class="loc-status loc-done">done ✓</div>
+      </div>
+      <div class="location-item">
+        <div class="loc-icon">🇮🇸</div>
+        <div>
+          <div class="loc-name">Iceland</div>
+          <div class="loc-desc">Laugavegur trail · midnight sun</div>
+        </div>
+        <div class="loc-status loc-done">done ✓</div>
+      </div>
+      <div class="location-item">
+        <div class="loc-icon">🇳🇵</div>
+        <div>
+          <div class="loc-name">Nepal</div>
+          <div class="loc-desc">Annapurna Circuit · EBC</div>
+        </div>
+        <div class="loc-status loc-done">done ✓</div>
+      </div>
+    </div>
+  </section>
 
-<script>
-/* ═══════════════════════════════
-   PAGES CONFIG
-═══════════════════════════════ */
-const PAGES = [
-  { id:'page0', bg:'bg0', emoji:'🌙', sfxType:'cosmic' },
-  { id:'page1', bg:'bg1', emoji:'🍛', sfxType:'warmth',
-    responseMap: { default: 'म त भोकै छु! 😭 खान लाग्यो!' } },
-  { id:'page2', bg:'bg2', emoji:'📚', sfxType:'electric' },
-  { id:'page3', bg:'bg3', emoji:'💙', sfxType:'dreamy' },
-  { id:'page4', bg:'bg4', emoji:'👊', sfxType:'punch' },
-  { id:'page5', bg:'bg5', emoji:'🌊', sfxType:'flow' },
-  { id:'page6', bg:'bg6', emoji:'😴', sfxType:'lullaby' },
-  { id:'page-final', bg:'bg-final', emoji:'🎉', sfxType:'finale', isFinal:true },
-];
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <p class="sub-label">// subscribe</p>
+    <h3>New post? I'll ping you.</h3>
+    <p>No newsletters. No drip campaigns. Just an email when I publish something new — infrequent, intentional, worth your time.</p>
+    <div class="newsletter-form">
+      <input type="email" placeholder="you@example.com" />
+      <button>Subscribe →</button>
+    </div>
+  </section>
+  </main>
 
-let currentPage = 0;
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">~/myblog <span>_</span></div>
+    <div class="footer-links">
+      <a href="#">github</a>
+      <a href="#">twitter</a>
+      <a href="#">rss</a>
+      <a href="#">contact</a>
+    </div>
+  </footer>
 
-/* Progress dots */
-const progEl = document.getElementById('progress');
-for (let i = 0; i < 7; i++) {
-  const d = document.createElement('div');
-  d.className = 'pdot' + (i === 0 ? ' current' : '');
-  d.id = `dot${i}`;
-  progEl.appendChild(d);
-}
-function updateProgress(idx) {
-  for (let i = 0; i < 7; i++) {
-    const d = document.getElementById(`dot${i}`);
-    if (!d) continue;
-    d.className = 'pdot' + (i < idx ? ' done' : i === idx ? ' current' : '');
-  }
-}
-
-/* ── Stars ── */
-const starsEl = document.getElementById('stars');
-for (let i = 0; i < 160; i++) {
-  const s = document.createElement('div');
-  s.className = 'star';
-  const sz = Math.random() * 2.5 + .5;
-  s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--op:${.3+Math.random()*.7};animation-delay:${Math.random()*5}s;`;
-  starsEl.appendChild(s);
-}
-
-/* Viz bars */
-const vizEl = document.getElementById('viz');
-const vizColors = [
-  ['#ff4d88','#f5c842'], ['#ff8844','#ffcc44'], ['#00ff80','#00ffcc'],
-  ['#4488ff','#00ccff'], ['#ff60cc','#ff4daa'], ['#ff8c00','#ffcc00'],
-  ['#b86fff','#ff80ff'], ['#00e5cc','#80ffee'], ['#f5c842','#ff4d88']
-];
-for (let i = 0; i < 18; i++) {
-  const b = document.createElement('div');
-  b.className = 'vbar';
-  const h = 6 + Math.random() * 16;
-  b.style.cssText = `--vh:${h}px;--vd:${0.2+Math.random()*.5}s;animation-delay:${Math.random()*.3}s;`;
-  vizEl.appendChild(b);
-}
-function updateVizColors(idx) {
-  const [c1, c2] = vizColors[idx % vizColors.length];
-  document.querySelectorAll('.vbar').forEach(b => {
-    b.style.setProperty('--vc1', c1);
-    b.style.setProperty('--vc2', c2);
-  });
-}
-
-/* ═══════════════════════════════
-   WEB AUDIO ENGINE
-═══════════════════════════════ */
-let audioCtx = null, masterGain = null, isPlaying = false, bgmScheduler = null;
-
-function initAudio() {
-  if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  masterGain.connect(audioCtx.destination);
-}
-function osc(type, freq, startT, dur, gainVal=0.15, detune=0) {
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = type; o.frequency.setValueAtTime(freq, startT); o.detune.setValueAtTime(detune, startT);
-  g.gain.setValueAtTime(0, startT); g.gain.linearRampToValueAtTime(gainVal, startT+0.01);
-  g.gain.exponentialRampToValueAtTime(0.001, startT+dur);
-  o.connect(g); g.connect(masterGain); o.start(startT); o.stop(startT+dur+0.05); return o;
-}
-function noise(startT, dur, gainVal=0.08, bpFreq=800) {
-  const bufLen = audioCtx.sampleRate * dur;
-  const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
-  const data = buf.getChannelData(0);
-  for (let i=0; i<bufLen; i++) data[i] = Math.random()*2-1;
-  const src = audioCtx.createBufferSource();
-  src.buffer = buf;
-  const bp = audioCtx.createBiquadFilter();
-  bp.type = 'bandpass'; bp.frequency.value = bpFreq; bp.Q.value = 1.5;
-  const g = audioCtx.createGain();
-  g.gain.setValueAtTime(gainVal, startT);
-  g.gain.exponentialRampToValueAtTime(0.001, startT+dur);
-  src.connect(bp); bp.connect(g); g.connect(masterGain);
-  src.start(startT); src.stop(startT+dur+0.05);
-}
-
-/* ── Page-entry sounds ── */
-function playSfx(type) {
-  initAudio();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  const now = audioCtx.currentTime;
-  switch (type) {
-    case 'cosmic': // whoosh + sparkle
-      osc('sawtooth',800,now,.25,.12); osc('sine',400,now+.1,.3,.1);
-      [523,784,1047,1319].forEach((f,i) => osc('sine',f,now+i*.07,.2,.08));
-      break;
-    case 'warmth': // cozy bells
-      [440,550,660,880,1100].forEach((f,i) => osc('sine',f,now+i*.1,.4,.1));
-      noise(now,.2,.06,300);
-      break;
-    case 'electric': // zap up
-      osc('square',200,now,.15,.12);
-      osc('square',400,now+.1,.15,.1);
-      osc('square',800,now+.2,.15,.1);
-      osc('square',1200,now+.3,.2,.08);
-      break;
-    case 'dreamy': // soft harp-like
-      [330,415,523,659,784,1047].forEach((f,i) => osc('sine',f,now+i*.12,.6,.07,Math.random()*10-5));
-      break;
-    case 'punch': // impact boom
-      const ko = audioCtx.createOscillator(); const kg = audioCtx.createGain();
-      ko.frequency.setValueAtTime(300,now); ko.frequency.exponentialRampToValueAtTime(40,now+.25);
-      kg.gain.setValueAtTime(.5,now); kg.gain.exponentialRampToValueAtTime(.001,now+.3);
-      ko.connect(kg); kg.connect(masterGain); ko.start(now); ko.stop(now+.35);
-      noise(now,.12,.15,2000);
-      osc('square',220,now+.05,.2,.1);
-      break;
-    case 'flow': // ocean wave sweep
-      for(let i=0;i<5;i++) osc('sine',200+i*80,now+i*.08,.5+i*.1,.08);
-      noise(now,.4,.1,400);
-      break;
-    case 'lullaby': // soft descending lullaby
-      [523,494,440,415,392].forEach((f,i) => osc('sine',f,now+i*.15,.5,.09));
-      osc('triangle',262,now,.8,.12);
-      break;
-    case 'finale': // epic fanfare
-      [[523,0],[659,.1],[784,.2],[1047,.3],[1319,.45],[1047,.6],[1319,.75],[1047,.9]].forEach(([f,t]) => {
-        osc('square',f,now+t,.2,.12);
-        osc('sine',f,now+t,.3,.09);
-      });
-      [523,659,784,1047,1319].forEach(f => osc('sine',f,now+1.1,.8,.08));
-      noise(now+1.1,.5,.12,5000);
-      // confetti boings
-      for(let i=0;i<6;i++) {
-        const b = audioCtx.createOscillator(); const bg = audioCtx.createGain();
-        b.type='sine'; b.frequency.setValueAtTime(100+Math.random()*200,now+i*.12);
-        b.frequency.exponentialRampToValueAtTime(600+Math.random()*400,now+i*.12+.3);
-        bg.gain.setValueAtTime(.15,now+i*.12); bg.gain.exponentialRampToValueAtTime(.001,now+i*.12+.35);
-        b.connect(bg); bg.connect(masterGain); b.start(now+i*.12); b.stop(now+i*.12+.4);
-      }
-      break;
-  }
-}
-
-/* ── Whoosh transition ── */
-function sfxWhoosh() {
-  initAudio();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  const now = audioCtx.currentTime;
-  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-  o.type='sawtooth'; o.frequency.setValueAtTime(600,now); o.frequency.exponentialRampToValueAtTime(80,now+.35);
-  g.gain.setValueAtTime(.16,now); g.gain.exponentialRampToValueAtTime(.001,now+.35);
-  o.connect(g); g.connect(masterGain||audioCtx.destination); o.start(now); o.stop(now+.4);
-}
-
-/* ── BGM ── */
-const BPM=128, BEAT=60/BPM;
-const MELODY=[[523,0],[659,.5],[784,1],[1047,1.5],[784,2],[659,2.25],[523,2.5],
-  [880,3],[831,3.25],[784,3.5],[698,3.75],[659,4],[587,4.25],[523,4.5],[494,4.75],
-  [262,5],[262,5.15],[262,5.3],[330,5.6],[262,5.8],[330,6],[392,6.25],
-  [523,7],[587,7.25],[659,7.5],[698,7.75],[784,8],[880,8.25],[988,8.5],[1047,8.75]];
-const BASS=[[130,0],[165,1],[196,2],[130,3],[110,4],[130,5],[98,6],[130,7]];
-
-function playBGM() {
-  initAudio();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  const loop = 9*BEAT;
-  let startT = audioCtx.currentTime+.05;
-  function scheduleLoop(baseT) {
-    MELODY.forEach(([f,off]) => {
-      const t=baseT+off*BEAT*.5;
-      osc('square',f,t,BEAT*.22,.1); osc('sine',f,t,BEAT*.22,.07,-5);
-    });
-    BASS.forEach(([f,off]) => {
-      const t=baseT+off*BEAT*.5;
-      osc('sine',f,t,BEAT*.35,.22); osc('triangle',f*2,t,BEAT*.15,.07);
-    });
-    for(let i=0;i<8;i++){
-      const t=baseT+i*BEAT*.5;
-      const ko=audioCtx.createOscillator(),kg=audioCtx.createGain();
-      ko.frequency.setValueAtTime(160,t); ko.frequency.exponentialRampToValueAtTime(40,t+.15);
-      kg.gain.setValueAtTime(.45,t); kg.gain.exponentialRampToValueAtTime(.001,t+.2);
-      ko.connect(kg); kg.connect(masterGain); ko.start(t); ko.stop(t+.22);
+  <script>
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('div');
+      s.classList.add('star');
+      const size = Math.random() * 2 + 0.5;
+      s.style.cssText = `
+        width:${size}px;height:${size}px;
+        top:${Math.random()*100}%;left:${Math.random()*100}%;
+        --d:${2+Math.random()*4}s;
+        --min:${0.05+Math.random()*0.15};
+        --max:${0.3+Math.random()*0.5};
+        animation-delay:${Math.random()*5}s;
+      `;
+      starsEl.appendChild(s);
     }
-    for(let i=0;i<16;i++) if(i%2===1) noise(baseT+i*BEAT*.25,.06,.04,6000+Math.random()*2000);
-    bgmScheduler = setTimeout(() => scheduleLoop(baseT+loop),(loop-.3)*1000);
-  }
-  scheduleLoop(startT);
-  isPlaying=true; updateMusicUI(); vizEl.classList.add('on');
-}
-function stopBGM() {
-  clearTimeout(bgmScheduler);
-  if(masterGain){masterGain.gain.setTargetAtTime(0,audioCtx.currentTime,.2);
-    setTimeout(()=>masterGain.gain.setValueAtTime(.3,audioCtx.currentTime),600);}
-  isPlaying=false; updateMusicUI(); vizEl.classList.remove('on');
-}
-function updateMusicUI() {
-  document.getElementById('musicLabel').textContent = isPlaying ? 'Mute 🔇':'Play Music';
-  document.getElementById('musicBtn').classList.toggle('playing',isPlaying);
-}
-document.getElementById('musicBtn').addEventListener('click', ()=>{
-  isPlaying ? stopBGM() : playBGM();
-});
-
-/* ═══════════════════════════════
-   NAVIGATION
-═══════════════════════════════ */
-function goNext() {
-  if (currentPage >= PAGES.length - 1) return;
-
-  // For page1 (khana bhayo) — show "ma ta bhokai chhu" response briefly then advance
-  const pageConfig = PAGES[currentPage];
-  const pageEl = document.getElementById(pageConfig.id);
-  const respEl = pageEl ? pageEl.querySelector('.response-flash') : null;
-
-  if (currentPage === 1 && respEl) {
-    // show "ma ta bhokai chhu"
-    respEl.textContent = 'म त भोकै छु! 😭 🍕🍜🍛';
-    respEl.style.opacity = '1';
-    sfxWhoosh();
-    setTimeout(() => advancePage(), 900);
-  } else {
-    sfxWhoosh();
-    advancePage();
-  }
-}
-
-function advancePage() {
-  const fromConfig = PAGES[currentPage];
-  const fromEl = document.getElementById(fromConfig.id);
-  const fromBg = document.getElementById(fromConfig.bg);
-
-  currentPage++;
-  const toConfig = PAGES[currentPage];
-  const toEl = document.getElementById(toConfig.id);
-  const toBg = document.getElementById(toConfig.bg);
-
-  // exit old
-  fromEl.classList.add('exit');
-  fromEl.classList.remove('active');
-
-  // fade BGs
-  fromBg.style.transition = 'opacity 1s';
-  fromBg.style.opacity = '0';
-  toBg.style.transition = 'opacity 1s';
-  toBg.style.opacity = '1';
-
-  setTimeout(() => {
-    fromEl.style.display = 'none';
-
-    // enter new
-    toEl.style.display = 'flex';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      toEl.classList.add('active');
-    }));
-
-    // play entry sfx
-    playSfx(toConfig.sfxType);
-
-    // launch floaters + burst
-    launchFloaters(toConfig.emoji);
-    launchBurst();
-
-    // update progress
-    if (!toConfig.isFinal) updateProgress(currentPage);
-    else {
-      // hide progress on final
-      progEl.style.opacity='0';
-    }
-
-    // update viz colors
-    updateVizColors(currentPage);
-
-    // focus input if not final
-    if (!toConfig.isFinal) {
-      setTimeout(() => {
-        const inp = toEl.querySelector('.answer-input');
-        if (inp) inp.focus();
-      }, 400);
-    }
-  }, 600);
-}
-
-function launchFloaters(mainEmoji) {
-  const el = document.getElementById('floaters');
-  el.innerHTML = '';
-  const emojis = ['🌸','💫','✨','🌺','💕','🎶','🌟','💐','🦋','🌈','🎉','💖','🎊','🥳','🎵',
-    mainEmoji||'⭐'];
-  for (let i=0;i<22;i++) {
-    const f=document.createElement('div');
-    f.className='floater';
-    f.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    f.style.cssText=`--lft:${5+Math.random()*90}%;--fs:${1+Math.random()*2}rem;--du:${3+Math.random()*4}s;--dl:${Math.random()*3}s;--rot:${-30+Math.random()*60}deg;`;
-    el.appendChild(f);
-  }
-}
-
-function launchBurst() {
-  const el = document.getElementById('burstWrap');
-  el.innerHTML = '';
-  const bc=['#a8ffce','#f5c842','#ff4d88','#00f5d4','#fff','#7b2fff','#ff8c00','#60b4ff'];
-  const cx=window.innerWidth/2, cy=window.innerHeight/2;
-  for(let i=0;i<70;i++){
-    const b=document.createElement('div');
-    b.className='sb';
-    const angle=Math.random()*Math.PI*2, dist=80+Math.random()*300;
-    b.style.cssText=`--sleft:${cx}px;--stop:${cy}px;--sc:${bc[i%bc.length]};--sw:${3+Math.random()*7}px;--stx:${Math.cos(angle)*dist}px;--sty:${Math.sin(angle)*dist}px;--sdu:${.7+Math.random()*.9}s;--sdl:${.05+Math.random()*.6}s;`;
-    el.appendChild(b);
-  }
-}
-
-/* Wire buttons */
-function wirePages() {
-  PAGES.forEach((cfg, idx) => {
-    if (cfg.isFinal) return;
-    const el = document.getElementById(cfg.id);
-    if (!el) return;
-    const btn = el.querySelector('.send-btn');
-    const inp = el.querySelector('.answer-input');
-    if (btn) btn.addEventListener('click', function(e) {
-      const r=document.createElement('span'); r.className='ripple';
-      const rect=this.getBoundingClientRect(), sz=Math.max(rect.width,rect.height);
-      r.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px;`;
-      this.appendChild(r); setTimeout(()=>r.remove(),700);
-      if (currentPage === idx) goNext();
-    });
-    if (inp) inp.addEventListener('keydown', e => {
-      if (e.key==='Enter' && currentPage === idx) goNext();
-    });
-  });
-}
-wirePages();
-
-/* Initial sfx on load */
-window.addEventListener('load', () => {
-  setTimeout(() => playSfx('cosmic'), 600);
-});
-</script>
+  </script>
 </body>
 </html>
